@@ -1,0 +1,34 @@
+{
+  "case_id": "options_001",
+  "instrumento": "options",
+  "descripcion": "Orden trivial: covered call nivel 2",
+  "input": {
+    "orden": {
+      "orden_id": "ORD-2026-11-50001",
+      "instrumento": "options",
+      "tipo": "buy",
+      "cantidad": 10,
+      "subyacente": "AAPL",
+      "tipo_opcion": "call",
+      "strike": 180,
+      "vencimiento": "2027-01-15",
+      "nivel_aprobacion_cliente": 2,
+      "estrategia": "covered",
+      "cuenta_id": "ACC-4475",
+      "cliente_id": "CLI-005"
+    },
+    "contexto_cliente": {
+      "delta_total": 100.0,
+      "delta_orden": 50.0
+    }
+  },
+  "expected": {
+    "reglas_fallidas": [],
+    "fallos_total": 0,
+    "riesgo_minimo": "LOW",
+    "piso_aplicado": false,
+    "requiere_gate": false,
+    "decision_esperada": "aprobada"
+  },
+  "rationale": "Covered call, nivel 2 >= 1 requerido. Delta 150 < 500. Sin fallos."
+}

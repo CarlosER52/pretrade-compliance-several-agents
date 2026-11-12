@@ -1,0 +1,42 @@
+{
+  "case_id": "stocks_004",
+  "instrumento": "stocks",
+  "descripcion": "Cliente en watchlist con orden normal",
+  "input": {
+    "orden": {
+      "orden_id": "ORD-2026-11-10004",
+      "instrumento": "stocks",
+      "tipo": "buy",
+      "cantidad": 100,
+      "simbolo": "AAPL",
+      "precio": 180,
+      "tipo_orden": "limit",
+      "cuenta_id": "ACC-4471",
+      "cliente_id": "CLI-001",
+      "sector": "tech"
+    },
+    "contexto_cliente": {
+      "capital_cuenta": 1500000,
+      "posicion_actual": {
+        "AAPL": 0
+      },
+      "exposicion_sector": {
+        "tech": 0
+      },
+      "precio_referencia": {
+        "AAPL": 180
+      },
+      "contra_partida_cliente_id": null,
+      "cliente_en_watchlist": true
+    }
+  },
+  "expected": {
+    "reglas_fallidas": [],
+    "fallos_total": 0,
+    "riesgo_minimo": "MEDIUM",
+    "piso_aplicado": true,
+    "requiere_gate": true,
+    "decision_esperada": "aprobada"
+  },
+  "rationale": "Sin fallos de reglas, pero cliente en watchlist. El piso lo sube a MEDIUM (mínimo para watchlist)."
+}

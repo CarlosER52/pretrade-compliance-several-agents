@@ -1,0 +1,39 @@
+{
+  "case_id": "crypto_006",
+  "instrumento": "crypto",
+  "descripcion": "Múltiples fallos: token + jurisdicción",
+  "input": {
+    "orden": {
+      "orden_id": "ORD-2026-11-30006",
+      "instrumento": "crypto",
+      "tipo": "buy",
+      "cantidad": 1000,
+      "token": "SHIB",
+      "exchange": "BINANCE",
+      "precio": 1e-05,
+      "cuenta_id": "ACC-4473",
+      "cliente_id": "CLI-003",
+      "jurisdiccion_cliente": "CN"
+    },
+    "contexto_cliente": {
+      "capital_cuenta": 1000000,
+      "exposicion_exchange": {},
+      "precio_referencia": {
+        "SHIB": 1e-05
+      },
+      "jurisdiccion_cliente": "CN"
+    }
+  },
+  "expected": {
+    "reglas_fallidas": [
+      "R1_activo_permitido",
+      "R3_jurisdiccion"
+    ],
+    "fallos_total": 2,
+    "riesgo_minimo": "HIGH",
+    "piso_aplicado": true,
+    "requiere_gate": true,
+    "decision_esperada": "rechazada"
+  },
+  "rationale": "SHIB no permitido Y CN no permitido. Dos fallos."
+}

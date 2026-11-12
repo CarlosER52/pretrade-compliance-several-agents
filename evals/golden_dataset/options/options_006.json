@@ -1,0 +1,38 @@
+{
+  "case_id": "options_006",
+  "instrumento": "options",
+  "descripcion": "Múltiples fallos: nivel + griegas",
+  "input": {
+    "orden": {
+      "orden_id": "ORD-2026-11-50006",
+      "instrumento": "options",
+      "tipo": "buy",
+      "cantidad": 10,
+      "subyacente": "AAPL",
+      "tipo_opcion": "call",
+      "strike": 180,
+      "vencimiento": "2027-01-15",
+      "nivel_aprobacion_cliente": 1,
+      "estrategia": "naked",
+      "cuenta_id": "ACC-4475",
+      "cliente_id": "CLI-005"
+    },
+    "contexto_cliente": {
+      "delta_total": 400.0,
+      "delta_orden": 150.0
+    }
+  },
+  "expected": {
+    "reglas_fallidas": [
+      "R1_nivel_aprobacion",
+      "R2_estrategia_permitida",
+      "R3_limite_griegas"
+    ],
+    "fallos_total": 3,
+    "riesgo_minimo": "HIGH",
+    "piso_aplicado": true,
+    "requiere_gate": true,
+    "decision_esperada": "rechazada"
+  },
+  "rationale": "Nivel 1 para naked (requiere 4+), estrategia no permitida, delta excedido. Tres fallos."
+}

@@ -1,0 +1,36 @@
+{
+  "case_id": "crypto_001",
+  "instrumento": "crypto",
+  "descripcion": "Orden trivial BTC en exchange permitido",
+  "input": {
+    "orden": {
+      "orden_id": "ORD-2026-11-30001",
+      "instrumento": "crypto",
+      "tipo": "buy",
+      "cantidad": 0.5,
+      "token": "BTC",
+      "exchange": "BINANCE",
+      "precio": 60000,
+      "cuenta_id": "ACC-4473",
+      "cliente_id": "CLI-003",
+      "jurisdiccion_cliente": "EU"
+    },
+    "contexto_cliente": {
+      "capital_cuenta": 1000000,
+      "exposicion_exchange": {},
+      "precio_referencia": {
+        "BTC": 60000
+      },
+      "jurisdiccion_cliente": "EU"
+    }
+  },
+  "expected": {
+    "reglas_fallidas": [],
+    "fallos_total": 0,
+    "riesgo_minimo": "LOW",
+    "piso_aplicado": false,
+    "requiere_gate": false,
+    "decision_esperada": "aprobada"
+  },
+  "rationale": "0.5*60k=30k, 3% del capital. Sin fallos."
+}

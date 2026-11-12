@@ -1,0 +1,204 @@
+# pretrade_compliance_net.yaml
+# Especificación de red de Petri para Pre-Trade Compliance multiagente.
+# Motor objetivo: propio (src/petri/net.py) + verificación con z3-solver.
+#
+# Nota: las transiciones de tipo "timer" (t_timeout_analisis, t_recargar_budget)
+# modelan eventos temporales que eventualmente ocurren. El verificador Z3 las
+# trata como siempre potencialmente habilitadas, lo que rompe el deadlock por
+# agotamiento de pool + api_budget.
+
+net:
+  name: "PreTradeComplianceMultiAgent"
+  version: "1.1"
+  description: >
+    Red de Petri con colores para validación de órdenes financieras con
+    múltiples agentes LLM, recursos acotados y guarda de piso de reglas duras.
+    Incluye transiciones de timeout y recarga para garantizar deadlock-free.
+
+places:
+  # --- Places de datos ---
+  - id: p_orden_raw
+    type: data
+    capacity: null
+    initial_tokens: 0
+  - id: p_orden_schema_ok
+    type: data
+    capacity: null
+  - id: p_validacion_reglas
+    type: data
+    capacity: null
+  - id: p_analisis_contexto
+    type: data
+    capacity: null
+  - id: p_clasificacion_riesgo
+    type: data
+    capacity: null
+  - id: p_cola_gate
+    type: data
+    capacity: null
+  - id: p_acta_compliance
+    type: data
+    capacity: null
+  - id: p_archivada
+    type: data
+    capacity: null
+  - id: p_error
+    type: data
+    capacity: null
+
+  # --- Places de recursos ---
+  - id: p_pool_analista
+    type: resource
+    capacity: 2
+    initial_tokens: 2
+  - id: p_pool_clasificador
+    type: resource
+    capacity: 1
+    initial_tokens: 1
+  - id: p_pool_redactor
+    type: resource
+    capacity: 1
+    initial_tokens: 1
+  - id: p_gate_disponible
+    type: resource
+    capacity: 1
+    initial_tokens: 1
+  - id: p_api_budget
+    type: resource
+    capacity: 10
+    initial_tokens: 10
+
+  # --- Places de control ---
+  - id: p_sink
+    type: control
+  - id: p_inflight_llm
+    type: control
+    capacity: 1
+
+transitions:
+  - id: t_validar_schema
+    type: deterministic
+    inputs: [[p_orden_raw, 1]]
+    outputs: [[p_orden_schema_ok, 1], [p_error, 1]]
+    guard: "guards.schema_guard:validar_schema"
+    action: "petri.transitions:validar_schema_action"
+
+  - id: t_ejecutar_reglas
+    type: deterministic
+    inputs: [[p_orden_schema_ok, 1]]
+    outputs: [[p_validacion_reglas, 1]]
+    guard: null
+    action: "petri.transitions:ejecutar_reglas_action"
+
+  - id: t_ejecutar_analisis
+    type: llm
+    inputs:
+      - [p_validacion_reglas, 1]
+      - [p_pool_analista, 1]
+      - [p_api_budget, 1]
+    outputs:
+      - [p_analisis_contexto, 1]
+      - [p_pool_analista, 1]
+    guard: "guards.pool_guard:validar_pool_analista"
+    action: "agents.analyst:analyst_agent_action"
+
+  - id: t_timeout_analisis
+    type: timer
+    inputs: [[p_validacion_reglas, 1]]
+    outputs: [[p_error, 1]]
+    guard: "guards.pool_guard:timeout_excedido"
+    action: "petri.transitions:timeout_analisis_action"
+
+  - id: t_recargar_budget
+    type: timer
+    inputs: []
+    outputs: [[p_api_budget, 10]]
+    guard: "guards.pool_guard:ventana_renovada"
+    action: "petri.transitions:recargar_budget_action"
+
+  - id: t_clasificar_con_piso
+    type: deterministic
+    inputs:
+      - [p_analisis_contexto, 1]
+      - [p_pool_clasificador, 1]
+    outputs:
+      - [p_clasificacion_riesgo, 1]
+      - [p_pool_clasificador, 1]
+    guard: "guards.piso_guard:validar_piso"
+    action: "petri.transitions:clasificar_con_piso_action"
+
+  - id: t_enviar_a_gate
+    type: deterministic
+    inputs: [[p_clasificacion_riesgo, 1]]
+    outputs: [[p_cola_gate, 1]]
+    guard: "guards.reglas_guard:riesgo_requiere_gate"
+    action: "gate.compliance_gate:enqueue_action"
+
+  - id: t_aprobar
+    type: human_gate
+    inputs:
+      - [p_cola_gate, 1]
+      - [p_gate_disponible, 1]
+    outputs:
+      - [p_acta_compliance, 1]
+      - [p_gate_disponible, 1]
+    guard: "guards.gate_guard:validar_aprobacion"
+    action: "gate.compliance_gate:aprobar_action"
+
+  - id: t_rechazar
+    type: human_gate
+    inputs:
+      - [p_cola_gate, 1]
+      - [p_gate_disponible, 1]
+    outputs:
+      - [p_acta_compliance, 1]
+      - [p_gate_disponible, 1]
+    guard: "guards.gate_guard:validar_rechazo"
+    action: "gate.compliance_gate:rechazar_action"
+
+  - id: t_archivar
+    type: deterministic
+    inputs: [[p_acta_compliance, 1]]
+    outputs: [[p_archivada, 1]]
+    guard: "guards.idempotencia_guard:validar_archivo"
+    action: "archive.audit_trail:archivar_action"
+
+  - id: t_redactar_memo
+    type: llm
+    inputs:
+      - [p_clasificacion_riesgo, 1]
+      - [p_pool_redactor, 1]
+    outputs:
+      - [p_cola_gate, 1]
+      - [p_pool_redactor, 1]
+    guard: "guards.pool_guard:validar_pool_redactor"
+    action: "agents.writer:writer_agent_action"
+
+guards:
+  guarda_piso_reglas:
+    description: >
+      Si validacion_reglas.fallos_total > 0, el riesgo resultante DEBE
+      ser >= HIGH. Si el agente intenta bajar a LOW o MEDIUM, la guarda
+      falla y la transición no dispara.
+    logic: |
+      if validacion.fallos_total > 0:
+          if riesgo_base in ("LOW", "MEDIUM"):
+              return False, "VIOLACIÓN: agente intentó bajar riesgo con fallos"
+          return True, {"riesgo": "HIGH", "piso_aplicado": True}
+      if analisis.cliente_en_watchlist and riesgo_base == "LOW":
+          return False, "VIOLACIÓN: watchlist no puede ser LOW"
+      if analisis.hash_inputs != calcular_hash(validacion):
+          return False, "VIOLACIÓN: hash no coincide"
+      return True, {"riesgo": riesgo_base, "piso_aplicado": False}
+
+properties:
+  - name: deadlock_free
+    expected: true
+  - name: terminates_at_sink
+    expected: true
+  - name: pool_bounded
+    expected: true
+  - name: no_llm_without_pool
+    expected: true
+  - name: mutual_exclusion_gate
+    expected: true

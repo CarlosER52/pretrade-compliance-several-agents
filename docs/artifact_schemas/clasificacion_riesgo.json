@@ -1,0 +1,8 @@
+{
+  "orden_id": "ORD-2026-11-00001",
+  "riesgo": "HIGH",
+  "justificacion": "Riesgo base sugerido por agente: LOW. Fallos en reglas duras: 1. Piso aplicado: True.",
+  "piso_aplicado": true,
+  "riesgo_sugerido_por_agente": "LOW",
+  "hash_inputs": "a3f5..."
+}

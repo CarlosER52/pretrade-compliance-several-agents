@@ -1,0 +1,33 @@
+{
+  "case_id": "futures_001",
+  "instrumento": "futures",
+  "descripcion": "Orden trivial ESZ6 dentro de márgenes",
+  "input": {
+    "orden": {
+      "orden_id": "ORD-2026-11-40001",
+      "instrumento": "futures",
+      "tipo": "buy",
+      "cantidad": 10,
+      "contrato": "ESZ6",
+      "vencimiento": "2026-12-18",
+      "margen_disponible": 500000,
+      "precio": 4500,
+      "cuenta_id": "ACC-4474",
+      "cliente_id": "CLI-004",
+      "timestamp": "2026-11-10T15:00:00"
+    },
+    "contexto_cliente": {
+      "posicion_vencimiento": {},
+      "es_roll": false
+    }
+  },
+  "expected": {
+    "reglas_fallidas": [],
+    "fallos_total": 0,
+    "riesgo_minimo": "LOW",
+    "piso_aplicado": false,
+    "requiere_gate": false,
+    "decision_esperada": "aprobada"
+  },
+  "rationale": "10*15k=150k margen requerido, 500k disponible. Sin fallos."
+}

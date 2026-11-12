@@ -1,0 +1,12 @@
+{
+  "orden_id": "ORD-2026-11-00001",
+  "artefactos": {
+    "orden": { ... },
+    "validacion_reglas": { ... },
+    "analisis_contexto": { ... },
+    "clasificacion_riesgo": { ... },
+    "memo": "# Memo de Compliance\n..."
+  },
+  "idempotency_key": "3f2e1d4c5b6a7980...",
+  "timestamp_archivado": "2026-11-10T15:31:00Z"
+}

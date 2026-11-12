@@ -1,0 +1,9 @@
+{
+  "orden_id": "ORD-2026-11-00001",
+  "decision": "aprobada",
+  "oficial": "oficial_001",
+  "firma": "firma_digital_abc123",
+  "timestamp": "2026-11-10T15:30:00Z",
+  "justificacion": "Excepción aprobada por comité de riesgos, acta #123.",
+  "hash_clasificacion": "a3f5..."
+}

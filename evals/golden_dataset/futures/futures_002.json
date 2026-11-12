@@ -1,0 +1,35 @@
+{
+  "case_id": "futures_002",
+  "instrumento": "futures",
+  "descripcion": "Margen insuficiente",
+  "input": {
+    "orden": {
+      "orden_id": "ORD-2026-11-40002",
+      "instrumento": "futures",
+      "tipo": "buy",
+      "cantidad": 10,
+      "contrato": "ESZ6",
+      "vencimiento": "2026-12-18",
+      "margen_disponible": 100000,
+      "precio": 4500,
+      "cuenta_id": "ACC-4474",
+      "cliente_id": "CLI-004",
+      "timestamp": "2026-11-10T15:00:00"
+    },
+    "contexto_cliente": {
+      "posicion_vencimiento": {},
+      "es_roll": false
+    }
+  },
+  "expected": {
+    "reglas_fallidas": [
+      "R1_margen"
+    ],
+    "fallos_total": 1,
+    "riesgo_minimo": "HIGH",
+    "piso_aplicado": true,
+    "requiere_gate": true,
+    "decision_esperada": "rechazada"
+  },
+  "rationale": "10*15k=150k > 100k disponible. R1 falla."
+}

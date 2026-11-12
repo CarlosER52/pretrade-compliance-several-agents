@@ -1,0 +1,41 @@
+{
+  "case_id": "stocks_001",
+  "instrumento": "stocks",
+  "descripcion": "Orden trivial: 500 TSLA, dentro de todos los límites",
+  "input": {
+    "orden": {
+      "orden_id": "ORD-2026-11-10001",
+      "instrumento": "stocks",
+      "tipo": "buy",
+      "cantidad": 500,
+      "simbolo": "TSLA",
+      "precio": 200,
+      "tipo_orden": "limit",
+      "cuenta_id": "ACC-4471",
+      "cliente_id": "CLI-001",
+      "sector": "tech"
+    },
+    "contexto_cliente": {
+      "capital_cuenta": 1500000,
+      "posicion_actual": {
+        "TSLA": 0
+      },
+      "exposicion_sector": {
+        "tech": 0
+      },
+      "precio_referencia": {
+        "TSLA": 200
+      },
+      "contra_partida_cliente_id": null
+    }
+  },
+  "expected": {
+    "reglas_fallidas": [],
+    "fallos_total": 0,
+    "riesgo_minimo": "LOW",
+    "piso_aplicado": false,
+    "requiere_gate": false,
+    "decision_esperada": "aprobada"
+  },
+  "rationale": "500 * 200 = 100k, 6.67% del capital. Sin fallos. Riesgo LOW."
+}

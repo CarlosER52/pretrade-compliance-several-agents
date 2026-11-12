@@ -1,0 +1,37 @@
+{
+  "case_id": "forex_001",
+  "instrumento": "forex",
+  "descripcion": "Orden trivial EUR/USD dentro de horario",
+  "input": {
+    "orden": {
+      "orden_id": "ORD-2026-11-20001",
+      "instrumento": "forex",
+      "tipo": "buy",
+      "cantidad": 10000,
+      "par": "EUR/USD",
+      "tasa": 1.08,
+      "cuenta_id": "ACC-4472",
+      "cliente_id": "CLI-002",
+      "jurisdiccion_cliente": "EU",
+      "timestamp": "2026-11-10T10:00:00"
+    },
+    "contexto_cliente": {
+      "capital_cuenta": 1000000,
+      "exposicion_par": {},
+      "tasa_referencia": {
+        "EUR/USD": 1.08
+      },
+      "jurisdiccion_cliente": "EU",
+      "contraparte": "BANK_A"
+    }
+  },
+  "expected": {
+    "reglas_fallidas": [],
+    "fallos_total": 0,
+    "riesgo_minimo": "LOW",
+    "piso_aplicado": false,
+    "requiere_gate": false,
+    "decision_esperada": "aprobada"
+  },
+  "rationale": "10k * 1.08 = 10.8k, 1.08% del capital. Sin fallos."
+}

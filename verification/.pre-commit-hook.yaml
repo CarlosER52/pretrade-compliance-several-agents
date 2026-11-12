@@ -1,0 +1,1 @@
+python verification/run_verification.py --net src/petri/definitions.yaml

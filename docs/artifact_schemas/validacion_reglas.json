@@ -1,0 +1,35 @@
+{
+  "orden_id": "ORD-2026-11-00001",
+  "instrumento": "stocks",
+  "reglas": [
+    {
+      "regla_id": "R1_posicion",
+      "resultado": "fail",
+      "detalle": "Posición resultante 13.33% supera límite 10.00%",
+      "valor_observado": 0.1333,
+      "limite": 0.10
+    },
+    {
+      "regla_id": "R2_lista_restringida",
+      "resultado": "pass",
+      "detalle": "Emisor TSLA no está restringido"
+    },
+    {
+      "regla_id": "R3_concentracion",
+      "resultado": "pass",
+      "detalle": "Exposición sector tech 13.33% OK"
+    },
+    {
+      "regla_id": "R4_wash_trading",
+      "resultado": "pass",
+      "detalle": "Sin contra-partida; no se detecta wash trading"
+    },
+    {
+      "regla_id": "R5_sector",
+      "resultado": "pass",
+      "detalle": "Sector tech no está prohibido"
+    }
+  ],
+  "fallos_total": 1,
+  "hash_inputs": "a3f5..."
+}

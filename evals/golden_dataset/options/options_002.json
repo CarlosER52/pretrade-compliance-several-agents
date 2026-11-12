@@ -1,0 +1,36 @@
+{
+  "case_id": "options_002",
+  "instrumento": "options",
+  "descripcion": "Nivel insuficiente para naked",
+  "input": {
+    "orden": {
+      "orden_id": "ORD-2026-11-50002",
+      "instrumento": "options",
+      "tipo": "buy",
+      "cantidad": 10,
+      "subyacente": "AAPL",
+      "tipo_opcion": "call",
+      "strike": 180,
+      "vencimiento": "2027-01-15",
+      "nivel_aprobacion_cliente": 2,
+      "estrategia": "naked",
+      "cuenta_id": "ACC-4475",
+      "cliente_id": "CLI-005"
+    },
+    "contexto_cliente": {
+      "delta_total": 100.0,
+      "delta_orden": 50.0
+    }
+  },
+  "expected": {
+    "reglas_fallidas": [
+      "R1_nivel_aprobacion"
+    ],
+    "fallos_total": 1,
+    "riesgo_minimo": "HIGH",
+    "piso_aplicado": true,
+    "requiere_gate": true,
+    "decision_esperada": "rechazada"
+  },
+  "rationale": "Naked requiere nivel 4, cliente tiene 2. R1 falla."
+}
